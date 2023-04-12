@@ -135,6 +135,7 @@ var lists = {
       name: (0, import_fields.text)(),
       price: (0, import_fields.text)(),
       description: (0, import_fields.text)(),
+      avatar: (0, import_fields.image)({ storage: "my_local_images" }),
       category: (0, import_fields.select)({
         options: [
           { label: "Men", value: "men" },
@@ -145,9 +146,30 @@ var lists = {
     },
     hooks: {
       afterOperation: ({ operation, item }) => {
-        console.log(operation, item);
         if (operation === "create") {
           console.log(`New Item created. Name: ${item.name}, price: ${item.price}`);
+        }
+      },
+      resolveInput: ({ resolvedData }) => {
+        const { name } = resolvedData;
+        if (name) {
+          return {
+            ...resolvedData,
+            // Ensure the first letter of the title is capitalised
+            name: name[0].toUpperCase() + name.slice(1)
+          };
+        }
+        return resolvedData.name;
+      },
+      validateInput: ({ resolvedData, addValidationError }) => {
+        const { price } = resolvedData;
+        if (price >= "30000") {
+          addValidationError("The price should be less then 30000");
+        }
+      },
+      validateDelete: ({ operation, item }) => {
+        if (operation === "delete") {
+          console.log(`New Item delete. Name: ${item.name}, price: ${item.price}`);
         }
       }
     }

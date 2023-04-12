@@ -302,6 +302,7 @@ type Product {
   name: String
   price: String
   description: String
+  avatar: ImageFieldOutput
   category: String
 }
 
@@ -332,6 +333,7 @@ input ProductUpdateInput {
   name: String
   price: String
   description: String
+  avatar: ImageFieldInput
   category: String
 }
 
@@ -344,6 +346,7 @@ input ProductCreateInput {
   name: String
   price: String
   description: String
+  avatar: ImageFieldInput
   category: String
 }
 

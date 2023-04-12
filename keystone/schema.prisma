@@ -43,9 +43,14 @@ model Author {
 }
 
 model Product {
-  id          String  @id @default(cuid())
-  name        String  @default("")
-  price       String  @default("")
-  description String  @default("")
-  category    String?
+  id               String  @id @default(cuid())
+  name             String  @default("")
+  price            String  @default("")
+  description      String  @default("")
+  avatar_filesize  Int?
+  avatar_extension String?
+  avatar_width     Int?
+  avatar_height    Int?
+  avatar_id        String?
+  category         String?
 }

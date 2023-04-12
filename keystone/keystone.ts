@@ -91,6 +91,7 @@ const lists = {
       name: text(),
       price: text(),
       description:text(),
+      avatar:image({storage:"my_local_images"}),
       category:select({
         options: [
           { label: 'Men', value: 'men' },
@@ -101,11 +102,37 @@ const lists = {
      },
      hooks:{
       afterOperation: ({ operation, item }) => {
-        console.log(operation,item)
+        
         if (operation === 'create') {
           console.log(`New Item created. Name: ${item.name}, price: ${item.price}`);
         }
       },
+      resolveInput: ({ resolvedData }) => {
+        const { name } = resolvedData;
+        if (name) {
+          return {
+            ...resolvedData,
+            // Ensure the first letter of the title is capitalised
+            name: name[0].toUpperCase() + name.slice(1)
+          }
+        }
+        // We always return resolvedData from the resolveInput hook
+        return (resolvedData.name) 
+      },
+      validateInput: ({ resolvedData, addValidationError }) => {
+        const { price } = resolvedData;
+      
+        if (price >= '30000') {
+          // We call addValidationError to indicate an invalid value.
+          addValidationError('The price should be less then 30000');
+        }
+      },
+      validateDelete:({operation, item})=>{
+        if (operation === 'delete') {
+          console.log(`New Item delete. Name: ${item.name}, price: ${item.price}`);
+        }
+      }
+      
       
      },
      
