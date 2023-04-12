@@ -35,3 +35,17 @@ model Post {
 
   @@index([authorId])
 }
+
+model Author {
+  id    String @id @default(cuid())
+  name  String @default("")
+  email String @default("")
+}
+
+model Product {
+  id          String  @id @default(cuid())
+  name        String  @default("")
+  price       String  @default("")
+  description String  @default("")
+  category    String?
+}

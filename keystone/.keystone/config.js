@@ -55,6 +55,13 @@ var lists = {
       email: (0, import_fields.text)({ validation: { isRequired: true }, isIndexed: "unique" }),
       posts: (0, import_fields.relationship)({ ref: "Post.author", many: true }),
       password: (0, import_fields.password)({ validation: { isRequired: true } })
+    },
+    hooks: {
+      afterOperation: ({ operation, item }) => {
+        if (operation === "create") {
+          console.log(`New user created. Name: ${item.name}, Email: ${item.email}`);
+        }
+      }
     }
   }),
   Post: (0, import_core.list)({
@@ -87,6 +94,62 @@ var lists = {
           [1, 2, 1]
         ]
       })
+    }
+  }),
+  Author: (0, import_core.list)({
+    access: import_access.allowAll,
+    fields: {
+      name: (0, import_fields.text)(),
+      email: (0, import_fields.text)()
+    },
+    hooks: {
+      afterOperation: ({ operation, item }) => {
+        console.log(operation, item);
+        if (operation === "create") {
+          console.log(`New user created. Name: ${item.name}, Email: ${item.email}`);
+        }
+      },
+      resolveInput: async ({
+        listKey,
+        operation,
+        inputData,
+        item,
+        resolvedData,
+        context
+      }) => {
+        console.log(
+          "resolvedData",
+          listKey,
+          operation,
+          inputData,
+          item,
+          resolvedData,
+          context
+        );
+      }
+    }
+  }),
+  Product: (0, import_core.list)({
+    access: import_access.allowAll,
+    fields: {
+      name: (0, import_fields.text)(),
+      price: (0, import_fields.text)(),
+      description: (0, import_fields.text)(),
+      category: (0, import_fields.select)({
+        options: [
+          { label: "Men", value: "men" },
+          { label: "Women", value: "women" },
+          { label: "Kids", value: "kids" }
+        ]
+      })
+    },
+    hooks: {
+      afterOperation: ({ operation, item }) => {
+        console.log(operation, item);
+        if (operation === "create") {
+          console.log(`New Item created. Name: ${item.name}, price: ${item.price}`);
+        }
+      }
     }
   })
 };

@@ -13,6 +13,13 @@ const lists = {
       posts: relationship({ ref: 'Post.author', many: true }),
       password: password({ validation: { isRequired: true } })
     },
+    hooks: {
+      afterOperation: ({ operation, item }) => {
+        if (operation === 'create') {
+          console.log(`New user created. Name: ${item.name}, Email: ${item.email}`);
+        }
+      }
+    },
   }),
   Post:list({
     access:allowAll,
@@ -46,7 +53,66 @@ const lists = {
         ],
       }),
     },
+  }),
+  Author: list({
+    access: allowAll,
+    fields: {
+      name: text(),
+      email: text(),
+     },
+    hooks: {
+      afterOperation: ({ operation, item }) => {
+        console.log(operation,item)
+        if (operation === 'create') {
+          console.log(`New user created. Name: ${item.name}, Email: ${item.email}`);
+        }
+      },
+      resolveInput: async ({
+        listKey,
+        operation,
+        inputData,
+        item,
+        resolvedData,
+        context,
+      }) => {
+        /* ... */
+        console.log("resolvedData",listKey,
+        operation,
+        inputData,
+        item,
+        resolvedData,
+        context)
+      },
+    },
+  }),
+  Product:list({
+    access: allowAll,
+    fields: {
+      name: text(),
+      price: text(),
+      description:text(),
+      category:select({
+        options: [
+          { label: 'Men', value: 'men' },
+          { label: 'Women', value: 'women' },
+          {label:"Kids",value:"kids"}
+        ],
+      }),
+     },
+     hooks:{
+      afterOperation: ({ operation, item }) => {
+        console.log(operation,item)
+        if (operation === 'create') {
+          console.log(`New Item created. Name: ${item.name}, price: ${item.price}`);
+        }
+      },
+      
+     },
+     
+
+
   })
+
    
   };
   
