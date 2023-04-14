@@ -12,11 +12,12 @@ generator client {
 }
 
 model User {
-  id       String @id @default(cuid())
-  name     String @default("")
-  email    String @unique @default("")
-  posts    Post[] @relation("Post_author")
-  password String
+  id                   String    @id @default(cuid())
+  name                 String    @default("")
+  email                String    @unique @default("")
+  posts                Post[]    @relation("Post_author")
+  password             String
+  from_Product_authors Product[] @relation("Product_authors")
 }
 
 model Post {
@@ -34,4 +35,24 @@ model Post {
   content          Json      @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
 
   @@index([authorId])
+}
+
+model Author {
+  id    String @id @default(cuid())
+  name  String @default("")
+  email String @default("")
+}
+
+model Product {
+  id               String  @id @default(cuid())
+  name             String  @default("")
+  price            String  @default("")
+  description      String  @default("")
+  authors          User[]  @relation("Product_authors")
+  avatar_filesize  Int?
+  avatar_extension String?
+  avatar_width     Int?
+  avatar_height    Int?
+  avatar_id        String?
+  category         String?
 }

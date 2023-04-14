@@ -13,6 +13,13 @@ const lists = {
       posts: relationship({ ref: 'Post.author', many: true }),
       password: password({ validation: { isRequired: true } })
     },
+    hooks: {
+      afterOperation: ({ operation, item }) => {
+        if (operation === 'create') {
+          console.log(`New user created. Name: ${item.name}, Email: ${item.email}`);
+        }
+      }
+    },
   }),
   Post:list({
     access:allowAll,
@@ -21,8 +28,7 @@ const lists = {
       avatar:image({storage:"my_local_images"}),
       publishedAt: timestamp(),
       author: relationship({
-        ref: 'User.posts',
-        
+        ref: 'User.posts', many: false
       }),
       status: select({
         options: [
@@ -46,7 +52,91 @@ const lists = {
         ],
       }),
     },
+  }),
+  Author: list({
+    access: allowAll,
+    fields: {
+      name: text(),
+      email: text(),
+     },
+    hooks: {
+      afterOperation: ({ operation, item }) => {
+        console.log(operation,item)
+        if (operation === 'create') {
+          console.log(`New user created. Name: ${item.name}, Email: ${item.email}`);
+        }
+      },
+      resolveInput: async ({
+        listKey,
+        operation,
+        inputData,
+        item,
+        resolvedData,
+        context,
+      }) => {
+        /* ... */
+        console.log("resolvedData",listKey,
+        operation,
+        inputData,
+        item,
+        resolvedData,
+        context)
+      },
+    },
+  }),
+  Product:list({
+    access: allowAll,
+    fields: {
+      name: text(),
+      price: text(),
+      description:text(),
+      authors: relationship({ ref: 'User', many: true }),
+      avatar:image({storage:"my_local_images"}),
+      category:select({
+        options: [
+          { label: 'Men', value: 'men' },
+          { label: 'Women', value: 'women' },
+          {label:"Kids",value:"kids"}
+        ],
+      }),
+     },
+     hooks:{
+      afterOperation: ({ operation, item }) => {
+        
+        if (operation === 'create') {
+          console.log(`New Item created. Name: ${item.name}, price: ${item.price}`);
+        }
+      },
+      resolveInput: ({ resolvedData }) => {
+        const { name } = resolvedData;
+        if (name) {
+          return {
+            ...resolvedData,
+            name: name[0].toUpperCase() + name.slice(1)
+          }
+        }
+        return (resolvedData.name) 
+      },
+      validateInput: ({ resolvedData, addValidationError }) => {
+        const { price } = resolvedData;
+      
+        if (price >= '30000') {
+          addValidationError('The price should be less then 30000');
+        }
+      },
+      validateDelete:({operation, item})=>{
+        if (operation === 'delete') {
+          console.log(`New Item delete. Name: ${item.name}, price: ${item.price}`);
+        }
+      }
+      
+      
+     },
+     
+
+
   })
+
    
   };
   
@@ -59,21 +149,20 @@ const lists = {
       lists,
       storage: {
         my_local_images: {
-          // Images that use this store will be stored on the local machine
+        
           kind: 'local',
-          // This store is used for the image field type
+      
           type: 'image',
-          // The URL that is returned in the Keystone GraphQL API
+          
           generateUrl: path => `http://localhost:3000/images${path}`,
-          // The route that will be created in Keystone's backend to serve the images
+         
           serverRoute: {
             path: '/images',
           },
-          // Set serverRoute to null if you don't want a route to be created in Keystone
-          // serverRoute: null
+         
           storagePath: 'public/images',
         },
-        /** more storage */
+       
       },
       session,
       ui: {
