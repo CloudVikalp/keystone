@@ -12,11 +12,12 @@ generator client {
 }
 
 model User {
-  id       String @id @default(cuid())
-  name     String @default("")
-  email    String @unique @default("")
-  posts    Post[] @relation("Post_author")
-  password String
+  id                   String    @id @default(cuid())
+  name                 String    @default("")
+  email                String    @unique @default("")
+  posts                Post[]    @relation("Post_author")
+  password             String
+  from_Product_authors Product[] @relation("Product_authors")
 }
 
 model Post {
@@ -47,6 +48,7 @@ model Product {
   name             String  @default("")
   price            String  @default("")
   description      String  @default("")
+  authors          User[]  @relation("Product_authors")
   avatar_filesize  Int?
   avatar_extension String?
   avatar_width     Int?
